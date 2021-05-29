@@ -1,8 +1,8 @@
-const TARGET = "love".split("");
+const TARGET = "keelynandcarol".split("");
 const TARGET_LENGTH = TARGET.length;
-const POP_SIZE = 500;
+const POP_SIZE = 10000;
 const NUM_CHILDREN = 2;
-const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+const alphabet = " abcdefghijklmnopqrstuvwxyz".split("");
 
 class Individual {
     constructor(chromosome) {
@@ -22,10 +22,10 @@ class Individual {
     create_children(partner) {
         let chrom1 = this.chromosome;
         let chrom2 = partner.get_chromosome();
-        const mid = Math.floor(this.chromosome / 2);
+        const mid = Math.floor(TARGET_LENGTH / 2);
 
-        let child1 = chrom1.slice(0, mid).concat(chrom2.slice(mid + 1));
-        let child2 = chrom2.slice(0, mid).concat(chrom1.slice(mid + 1));
+        let child1 = chrom1.slice(0, mid).concat(chrom2.slice(mid));
+        let child2 = chrom2.slice(0, mid).concat(chrom1.slice(mid));
         return [new Individual(this.mutate(child1)), new Individual(this.mutate(child2))];
     }
     get_fitness() {
@@ -58,22 +58,27 @@ function create_initial_population(pop_size) {
 
 function main() {
     let population = create_initial_population(POP_SIZE);
+    let generations = 0;
     while (population.length > 0) {
         let new_population = [];
-        console.log('\n');
         for (let i = 0; i < population.length - 1; i += 2) {
-            console.log(`> ${population[i].get_chromosome()}[${population[i].get_fitness()}]`);
-            console.log(`> ${population[i+1].get_chromosome()}[${population[i+1].get_fitness()}]`);
 
-            if (TARGET === population[i] || TARGET === population[i + 1]) {
-                console.log("TARGET REACHED!");
+            if (TARGET_LENGTH === population[i].get_fitness() ||
+                TARGET_LENGTH === population[i + 1].get_fitness()) {
+                console.log(`TARGET REACHED (in ${generations} generations)!`);
                 break;
             }
             children = population[i].create_children(population[i + 1]);
-            new_population.concat(children);
+            new_population.push(children[0]);
+            new_population.push(children[1]);
         }
         population = new_population.sort(
-            (a, b) => a.get_fitness() > b.get_fitness() ? -1 : 1).slice(0, new_population.length - 10);
+            (a, b) => a.get_fitness() > b.get_fitness() ? -1 : 1).slice(0, population.length - 1);
+        generations++;
+        if (population.length > 0) {
+            let first_string = population[0].get_chromosome().toString();
+            console.log(first_string);
+        }
     }
 }
 
