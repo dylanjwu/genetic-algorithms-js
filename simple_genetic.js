@@ -4,6 +4,8 @@ const POP_SIZE = 10000;
 const NUM_CHILDREN = 2;
 const alphabet = " abcdefghijklmnopqrstuvwxyz".split("");
 
+// https://machinelearningmastery.com/simple-genetic-algorithm-from-scratch-in-python/
+
 class Individual {
     constructor(chromosome) {
         this.chromosome = chromosome;
@@ -22,10 +24,10 @@ class Individual {
     create_children(partner) {
         let chrom1 = this.chromosome;
         let chrom2 = partner.get_chromosome();
-        const mid = Math.floor(TARGET_LENGTH / 2);
+        const crossover = Math.floor(Math.random(1, chrom1.length - 2));
 
-        let child1 = chrom1.slice(0, mid).concat(chrom2.slice(mid));
-        let child2 = chrom2.slice(0, mid).concat(chrom1.slice(mid));
+        let child1 = chrom1.slice(0, crossover).concat(chrom2.slice(crossover));
+        let child2 = chrom2.slice(0, crossover).concat(chrom1.slice(crossover));
         return [new Individual(this.mutate(child1)), new Individual(this.mutate(child2))];
     }
     get_fitness() {
